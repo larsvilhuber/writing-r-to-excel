@@ -4,3 +4,6 @@ Sys.sleep(1)
 if (file.exists("README.html.md")) {
   file.rename("README.html.md", "README.md")
 }
+if (file.exists("README.html")) {
+  file.rename("README.html", "index.html")
+}

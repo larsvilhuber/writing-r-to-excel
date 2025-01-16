@@ -1,4 +1,11 @@
 
 project:
-  type: website
   post-render:  _wrap_up.R
+  output-dir: .
+  render: 
+    - README.qmd
+
+toc: true
+format: 
+  html:
+    keep-md: true

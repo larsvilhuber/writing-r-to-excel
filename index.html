@@ -72,10 +72,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </head>
 
-<body class="fullcontent">
+<body>
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#data-generation" id="toc-data-generation" class="nav-link" data-scroll-target="#data-generation">Data Generation</a></li>
+  <li><a href="#analysis" id="toc-analysis" class="nav-link" data-scroll-target="#analysis">Analysis</a>
+  <ul class="collapse">
+  <li><a href="#save-results" id="toc-save-results" class="nav-link" data-scroll-target="#save-results">Save Results</a></li>
+  </ul></li>
+  <li><a href="#tables" id="toc-tables" class="nav-link" data-scroll-target="#tables">Tables</a>
+  <ul class="collapse">
+  <li><a href="#formatting-results-via-excel" id="toc-formatting-results-via-excel" class="nav-link" data-scroll-target="#formatting-results-via-excel">Formatting Results via Excel</a></li>
+  <li><a href="#display-results-here" id="toc-display-results-here" class="nav-link" data-scroll-target="#display-results-here">Display Results Here</a></li>
+  <li><a href="#directory-contents" id="toc-directory-contents" class="nav-link" data-scroll-target="#directory-contents">Directory Contents</a></li>
+  </ul></li>
+  <li><a href="#housekeeping" id="toc-housekeeping" class="nav-link" data-scroll-target="#housekeeping">Housekeeping</a></li>
+  </ul>
+</nav>
+</div>
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -112,6 +132,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </figure>
 </div>
 <p>The content of the two tabs <code>Regression1</code> and <code>Regression2</code> will be filled with the output from the two regressions run in this document. I have explicitly not set a seed, so that the values change very time you run the file. You can verify that the “funny table” is automatically updated with the latest results.</p>
+<blockquote class="blockquote">
+<p>You can find the full code as a Quarto (R) file at <a href="https://github.com/larsvilhuber/writing-r-to-excel" class="uri">https://github.com/larsvilhuber/writing-r-to-excel</a>.</p>
+</blockquote>
 <section id="setup" class="level2">
 <h2 class="anchored" data-anchor-id="setup">Setup</h2>
 <p>Load required packages and set up environment. The package <a href="https://cran.r-project.org/web/packages/openxlsx/index.html">openxlsx</a> is used in preference to <code>writexl</code> because we explicitly want to preserve the contens of any existing (formatted!) Excel file.</p>
@@ -344,27 +367,7 @@ Results from Regression 2:</code></pre>
 <section id="housekeeping" class="level2">
 <h2 class="anchored" data-anchor-id="housekeeping">Housekeeping</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get current file name</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>current_file <span class="ot">&lt;-</span> knitr<span class="sc">::</span><span class="fu">current_input</span>()</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(current_file)) {</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># when Quarto renders, it creates intermediate files </span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  qmd_file <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">.rmarkdown$"</span>, <span class="st">".qmd"</span>, current_file)</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  my_output_file <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">.qmd$"</span>, <span class="st">".R"</span>, qmd_file))</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Extract R code to a separate script file</span></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">system2</span>(<span class="st">"quarto"</span>, </span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">args =</span> <span class="fu">c</span>(<span class="st">"convert"</span>, current_file, </span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"--output"</span>, my_output_file))</span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> ( <span class="fu">file.exists</span>(my_output_file)) {</span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">message</span>(<span class="fu">paste0</span>(<span class="st">"This file ("</span>,current_file,<span class="st">") has been converted to "</span>,my_output_file,<span class="st">"."</span>))</span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">message</span>(<span class="st">"Code extraction only works when rendering the document, not in interactive mode."</span>)</span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>This file (README.rmarkdown) has been converted to C:/Users/lv39/Documents/GitHub/writing-r-to-excel/README.R.</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.4.2 (2024-10-31 ucrt)
 Platform: x86_64-w64-mingw32/x64
@@ -394,15 +397,14 @@ other attached packages:
 loaded via a namespace (and not attached):
  [1] gtable_0.3.6      jsonlite_1.8.9    compiler_4.4.2    renv_1.0.11      
  [5] zip_2.3.1         Rcpp_1.0.13-1     tidyselect_1.2.1  scales_1.3.0     
- [9] yaml_2.3.10       fastmap_1.2.0     here_1.0.1        R6_2.5.1         
-[13] generics_0.1.3    knitr_1.49        backports_1.5.0   rprojroot_2.0.4  
-[17] munsell_0.5.1     pillar_1.9.0      tzdb_0.4.0        rlang_1.1.4      
-[21] utf8_1.2.4        stringi_1.8.4     xfun_0.49         timechange_0.3.0 
-[25] cli_3.6.3         withr_3.0.2       magrittr_2.0.3    digest_0.6.37    
-[29] grid_4.4.2        rstudioapi_0.17.1 hms_1.1.3         lifecycle_1.0.4  
-[33] vctrs_0.6.5       evaluate_1.0.1    glue_1.8.0        fansi_1.0.6      
-[37] colorspace_2.1-1  rmarkdown_2.29    tools_4.4.2       pkgconfig_2.0.3  
-[41] htmltools_0.5.8.1</code></pre>
+ [9] yaml_2.3.10       fastmap_1.2.0     R6_2.5.1          generics_0.1.3   
+[13] knitr_1.49        backports_1.5.0   munsell_0.5.1     pillar_1.9.0     
+[17] tzdb_0.4.0        rlang_1.1.4       utf8_1.2.4        stringi_1.8.4    
+[21] xfun_0.49         timechange_0.3.0  cli_3.6.3         withr_3.0.2      
+[25] magrittr_2.0.3    digest_0.6.37     grid_4.4.2        rstudioapi_0.17.1
+[29] hms_1.1.3         lifecycle_1.0.4   vctrs_0.6.5       evaluate_1.0.1   
+[33] glue_1.8.0        fansi_1.0.6       colorspace_2.1-1  rmarkdown_2.29   
+[37] tools_4.4.2       pkgconfig_2.0.3   htmltools_0.5.8.1</code></pre>
 </div>
 </div>
 </section>

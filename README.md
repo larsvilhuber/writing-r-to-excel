@@ -1,9 +1,6 @@
 ---
 title: "Regression Analysis Example"
 author: "Lars Vilhuber"
-format: 
-  html:
-    keep-md: true
 execute:
   echo: true
   warning: true
@@ -22,6 +19,8 @@ The included file [`regression_results.xlsx`](regression_results.xlsx) has a tab
 ![My funny table](excel-formula.png)
 
 The content of the two tabs `Regression1` and `Regression2` will be filled with the output from the two regressions run in this document. I have explicitly not set a seed, so that the values change very time you run the file. You can verify that the "funny table" is automatically updated with the latest results.
+
+> You can find the full code as a Quarto (R) file at <https://github.com/larsvilhuber/writing-r-to-excel>.
 
 
 ## Setup
@@ -322,35 +321,6 @@ list.files(pattern = "(xlsx|rds)$")
 ::: {.cell}
 
 ```{.r .cell-code}
-# Get current file name
-current_file <- knitr::current_input()
-if (!is.null(current_file)) {
-  # when Quarto renders, it creates intermediate files 
-  qmd_file <- gsub("\\.rmarkdown$", ".qmd", current_file)
-  my_output_file <- here::here(gsub("\\.qmd$", ".R", qmd_file))
-
-  # Extract R code to a separate script file
-  system2("quarto", 
-        args = c("convert", current_file, 
-                 "--output", my_output_file))
-  if ( file.exists(my_output_file)) {
-    message(paste0("This file (",current_file,") has been converted to ",my_output_file,"."))
-  }
-} else {
-  message("Code extraction only works when rendering the document, not in interactive mode.")
-}
-```
-
-::: {.cell-output .cell-output-stderr}
-
-```
-This file (README.rmarkdown) has been converted to C:/Users/lv39/Documents/GitHub/writing-r-to-excel/README.R.
-```
-
-
-:::
-
-```{.r .cell-code}
 sessionInfo()
 ```
 
@@ -385,15 +355,14 @@ other attached packages:
 loaded via a namespace (and not attached):
  [1] gtable_0.3.6      jsonlite_1.8.9    compiler_4.4.2    renv_1.0.11      
  [5] zip_2.3.1         Rcpp_1.0.13-1     tidyselect_1.2.1  scales_1.3.0     
- [9] yaml_2.3.10       fastmap_1.2.0     here_1.0.1        R6_2.5.1         
-[13] generics_0.1.3    knitr_1.49        backports_1.5.0   rprojroot_2.0.4  
-[17] munsell_0.5.1     pillar_1.9.0      tzdb_0.4.0        rlang_1.1.4      
-[21] utf8_1.2.4        stringi_1.8.4     xfun_0.49         timechange_0.3.0 
-[25] cli_3.6.3         withr_3.0.2       magrittr_2.0.3    digest_0.6.37    
-[29] grid_4.4.2        rstudioapi_0.17.1 hms_1.1.3         lifecycle_1.0.4  
-[33] vctrs_0.6.5       evaluate_1.0.1    glue_1.8.0        fansi_1.0.6      
-[37] colorspace_2.1-1  rmarkdown_2.29    tools_4.4.2       pkgconfig_2.0.3  
-[41] htmltools_0.5.8.1
+ [9] yaml_2.3.10       fastmap_1.2.0     R6_2.5.1          generics_0.1.3   
+[13] knitr_1.49        backports_1.5.0   munsell_0.5.1     pillar_1.9.0     
+[17] tzdb_0.4.0        rlang_1.1.4       utf8_1.2.4        stringi_1.8.4    
+[21] xfun_0.49         timechange_0.3.0  cli_3.6.3         withr_3.0.2      
+[25] magrittr_2.0.3    digest_0.6.37     grid_4.4.2        rstudioapi_0.17.1
+[29] hms_1.1.3         lifecycle_1.0.4   vctrs_0.6.5       evaluate_1.0.1   
+[33] glue_1.8.0        fansi_1.0.6       colorspace_2.1-1  rmarkdown_2.29   
+[37] tools_4.4.2       pkgconfig_2.0.3   htmltools_0.5.8.1
 ```
 
 

@@ -1,9 +1,6 @@
 ---
 title: "Regression Analysis Example"
 author: "Lars Vilhuber"
-format: 
-  html:
-    keep-md: true
 execute:
   echo: true
   warning: true
@@ -19,6 +16,8 @@ The included file [`regression_results.xlsx`](regression_results.xlsx) has a tab
 ![My funny table](excel-formula.png)
 
 The content of the two tabs `Regression1` and `Regression2` will be filled with the output from the two regressions run in this document. I have explicitly not set a seed, so that the values change very time you run the file. You can verify that the "funny table" is automatically updated with the latest results.
+
+> You can find the full code as a Quarto (R) file at <https://github.com/larsvilhuber/writing-r-to-excel>.
 
 
 ## Setup
