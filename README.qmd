@@ -1,0 +1,187 @@
+---
+title: "Regression Analysis Example"
+author: "Lars Vilhuber"
+format: 
+  html:
+    keep-md: true
+execute:
+  echo: true
+  warning: true
+  message: false
+editor_options: 
+  chunk_output_type: console
+---
+
+This document describes a relatively straightforward way to create complex tables from standard regression output. While the example here could presumably be consructed using standard R tools, it simply serves to illustrate the principle. 
+
+The included file [`regression_results.xlsx`](regression_results.xlsx) has a tab called "My funny table", which references the content of the two other tabs:
+
+![My funny table](excel-formula.png)
+
+The content of the two tabs `Regression1` and `Regression2` will be filled with the output from the two regressions run in this document. I have explicitly not set a seed, so that the values change very time you run the file. You can verify that the "funny table" is automatically updated with the latest results.
+
+
+## Setup
+
+Load required packages and set up environment. The package [openxlsx](https://cran.r-project.org/web/packages/openxlsx/index.html) is used in preference to `writexl` because we explicitly want to preserve the contens of any existing (formatted!) Excel file.
+
+
+```{r}
+#| label: setup
+
+library(tidyverse)
+library(openxlsx)
+library(broom)
+```
+
+## Data Generation
+
+Create sample datasets for the regression analyses.
+
+```{r}
+#| label: create-data
+
+# Create sample data for first regression
+set.seed(123)
+data1 <- tibble(
+  x1 = rnorm(100),
+  x2 = rnorm(100),
+  y1 = 2*x1 + 0.5*x2 + rnorm(100)
+)
+
+# Create sample data for second regression
+data2 <- tibble(
+  z1 = rnorm(100),
+  z2 = rnorm(100),
+  z3 = rnorm(100),
+  y2 = 1.5*z1 - 0.8*z2 + 0.3*z3 + rnorm(100)
+)
+```
+
+## Analysis
+
+Perform regression analyses on both datasets.
+
+```{r}
+#| label: run-regressions
+
+# Run regressions
+reg1 <- lm(y1 ~ x1 + x2, data = data1)
+reg2 <- lm(y2 ~ z1 + z2 + z3, data = data2)
+
+# Convert regression results to tidy format
+reg1_results <- tidy(reg1)
+reg2_results <- tidy(reg2)
+```
+
+
+### Save Results
+
+Depending on what you want to do, you could simply post-process the existing tables, creating a simple dataset that is printed. Here, we save the individual results as datasets.
+If you were to split this document into three parts -- `Data generation`, `Analysis`, and `Tables` -- then this would be the last part of your analysis part.
+
+
+```{r}
+
+# Save regression results as RDS files
+saveRDS(reg1_results, "regression1_results.rds")
+saveRDS(reg2_results, "regression2_results.rds")
+
+```
+
+
+## Tables
+
+### Formatting Results via Excel
+
+Here, however, we want to simulate what might be a far more complex table.
+
+
+
+```{r}
+#| label: save-results
+# Read data back in, as if we were a separate program
+
+reg1_results <- readRDS("regression1_results.rds")
+reg2_results <- readRDS("regression2_results.rds")
+```
+
+I use a function here, in order to handle the case when a file exists, and when one doesn't. The very first time you would use this, no Excel file exists, but subsequent runs would overwrite the tabs within the existing file.
+
+
+```{r}
+
+# Function to write to Excel, creating file if it doesn't exist
+write_to_excel <- function(results_list, filename) {
+  # Check if file exists
+  if (!file.exists(filename)) {
+    # Create new workbook if file doesn't exist
+    message("Creating new file")
+    wb <- createWorkbook()
+  } else {
+    # Load existing workbook if file exists
+    message("Re-using existing file")
+    wb <- loadWorkbook(filename)
+  }
+  
+  # Loop through the results list and write/overwrite sheets
+  for (sheet_name in names(results_list)) {
+    # Remove sheet if it already exists
+    if (sheet_name %in% names(wb)) {
+      removeWorksheet(wb, sheet_name)
+    }
+    # Add new worksheet
+    addWorksheet(wb, sheet_name)
+    # Write data to worksheet
+    writeData(wb, sheet_name, results_list[[sheet_name]])
+  }
+  
+  # Save workbook
+  saveWorkbook(wb, filename, overwrite = TRUE)
+}
+
+# Create list of results
+regression_results <- list(
+  "Regression1" = reg1_results,
+  "Regression2" = reg2_results
+)
+
+# Write to Excel file
+write_to_excel(regression_results, "regression_results.xlsx")
+```
+
+### Display Results Here
+
+Show the regression results in the document.
+
+```{r}
+#| label: display-results
+
+# Display results from first regression
+cat("Results from Regression 1:\n")
+knitr::kable(reg1_results)
+
+cat("\nResults from Regression 2:\n")
+knitr::kable(reg2_results)
+```
+
+
+
+### Directory Contents
+
+Show files created in the working directory.
+
+```{r}
+#| label: list-files
+
+# List all files in current working directory
+list.files(pattern = "(xlsx|rds)$")
+```
+
+## Housekeeping
+
+```{r}
+#| label: session-info
+
+sessionInfo()
+```

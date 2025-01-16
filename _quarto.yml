@@ -1,0 +1,4 @@
+
+project:
+  type: website
+  post-render:  _wrap_up.R
